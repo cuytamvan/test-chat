@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: cuytamvan
+      POSTGRES_PASSWORD: cuytamvan
+      POSTGRES_DB: db_chat
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: cuytamvan
+      DB_USERNAME: cuytamvan
+      DB_PASSWORD: db_chat
+
+  vue:
+    build:
+      context: ./ui
+    ports:
+      - "8080:8080"
+
+  express:
+    build:
+      context: ./socket
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: mydatabase
+      DB_USERNAME: myuser
+      DB_PASSWORD: mypassword
+
+volumes:
+  postgres-data:

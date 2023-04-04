@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-poppins bg-gray-100;
+}
+
+body::-webkit-scrollbar,
+.custom-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+body::-webkit-scrollbar-thumb,
+.custom-scroll::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 bg-opacity-80 rounded-full;
+}
