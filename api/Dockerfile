@@ -20,6 +20,8 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install
+RUN php artisan migrate --seed
+RUN php artisan optimize
 
 EXPOSE 8000
 
