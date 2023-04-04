@@ -1,48 +1,53 @@
 version: '3'
-
 services:
-  postgres:
+  db:
     image: postgres:latest
+    restart: always
     environment:
       POSTGRES_USER: cuytamvan
       POSTGRES_PASSWORD: cuytamvan
-      POSTGRES_DB: db_chat
+      POSTGRES_DB: test_chat
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   api:
     build:
-      context: ./api
+      context: ./laravel
+      dockerfile: Dockerfile
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=test_chat
+      - DB_USERNAME=cuytamvan
+      - DB_PASSWORD=cuytamvan
+    volumes:
+      - ./api:/var/www/html
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
-    environment:
-      DB_HOST: 127.0.0.1
-      DB_PORT: 5432
-      DB_DATABASE: cuytamvan
-      DB_USERNAME: cuytamvan
-      DB_PASSWORD: db_chat
+      - db
 
   vue:
     build:
       context: ./ui
+      dockerfile: Dockerfile
+    volumes:
+      - ./vue:/app
+      - /app/node_modules
     ports:
-      - "8080:8080"
+      - "5173:5173"
 
-  express:
+  socket:
     build:
       context: ./socket
+      dockerfile: Dockerfile
+    volumes:
+      - ./socket:/app
+      - /app/node_modules
     ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_DATABASE: mydatabase
-      DB_USERNAME: myuser
-      DB_PASSWORD: mypassword
+      - "5000:5000"
 
 volumes:
-  postgres-data:
+  db_data:
